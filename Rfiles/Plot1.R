@@ -1,0 +1,13 @@
+filepath = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
+temp <- tempfile()
+download.file(filepath,temp)
+tab5rows <- read.table(unz(temp, "household_power_consumption.txt"), header = TRUE, sep=";", nrows = 5)
+classes <- sapply(tab5rows, class)
+tabAll <- read.table(unz(temp, "household_power_consumption.txt"), header = TRUE, colClasses = classes, sep=";", comment.char = "", na.strings = "?")
+unlink(temp)
+tabAll$Date <- as.Date(tabAll$Date, "%d/%m/%Y")
+df <- subset(tabAll, Date == "2007-02-01" | Date == "2007-02-02")
+df$Time <- strptime(paste(df$Date, as.character(df$Time)), "%Y-%m-%d %H:%M:%S")
+hist(df$Global_active_power, col='red', main='Global Active Power', xlab='Global Active Power (kilowatts)')
+dev.copy(png, file = "plot1.png")
+dev.off()
